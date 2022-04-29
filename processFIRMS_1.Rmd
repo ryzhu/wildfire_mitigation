@@ -32,9 +32,10 @@ CA_bound = st_transform(CA_bound, crs = 4326)
 # poi_inter <- st_intersects(CA_bound, poi)
 # poi_sf <- poi[poi_inter[[1]],]
 # poi_sf <- st_buffer(poi_sf, dist = 1000 / 2)
-Fire_ca_rough <- st_read(dsn = "./data/wildfire/Archive/DL_FIRE_M-C61_227996/fire_archive_M-C61_227996.shp") %>% 
-  st_set_crs(4326) %>%
-  subset(LONGITUDE >= -124.5 & LONGITUDE <= -114 & LATITUDE >= 32, LATITUDE <= 42.1)
+Fire_ca_rough <- st_read(dsn = "~/Box Sync/wildfire_mitigation/raw_data/FIRMS_MODIS_CA_to2022/fire_archive_M-C61_262030.shp") %>% 
+  st_set_crs(4326) 
+# %>%
+#   subset(LONGITUDE >= -124.5 & LONGITUDE <= -114 & LATITUDE >= 32, LATITUDE <= 42.1)
 # Fire_ca_rough_points <- Fire_ca_rough$geometry
 Fire_poi <- st_intersects(st_as_sf(CA_bound$geometry), st_as_sf(Fire_ca_rough$geometry))
 Fire_ca <- Fire_ca_rough[Fire_poi[[1]], ]
