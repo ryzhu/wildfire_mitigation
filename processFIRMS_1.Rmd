@@ -47,50 +47,14 @@ plot(CA_bound$geometry)
 plot(Fire_ca$geometry, pch=16,
      col=rgb(0,100,0,50,maxColorValue=255), add=TRUE)
 ```
-```{r}
-plot(Fire_ca[, c("BRIGHTNESS", "BRIGHT_T31", "CONFIDENCE")])
-```
-```{r}
-tableList <-
-  fread(
-    "https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG.txt"
-  )
-
-# convert the table of BG centers to spatial object
-popCentroidsBG <-
-  st_as_sf(tableList,
-           coords = c("LONGITUDE", "LATITUDE"),
-           crs = 4326,
-           remove=FALSE)
-
-rm(tableList)
-```
 
 ```{r}
-pop_centroids_ca = st_intersects(st_as_sf(CA_bound$geometry), st_as_sf(popCentroidsBG$geometry))
-pop_grid_ca = popCentroidsBG[pop_centroids_ca[[1]], ]
-# points = unlist(pop_grid_ca$geometry)
-# bool_inds = 1:length(points) %>% sapply(function(x){x %% 2}) %>% unlist %>% as.logical
-# pop_grid_ca["LONGITUDE"] <- list(points[bool_inds])
-# pop_grid_ca["LATITUDE"] = points[!bool_inds]
-rm(popCentroidsBG)
-plot(pop_grid_ca)
-```
-
-```{r}
-# Impose FIRMS onto the grid
-FIRMS_ca_gridded_full = st_join(Fire_ca, pop_grid_ca, join=st_nearest_feature, suffix=c("_ignore", ""))
-FIRMS_ca_gridded = FIRMS_ca_gridded_full[, c("BRIGHTNESS","ACQ_DATE", "ACQ_TIME", "CONFIDENCE", "LATITUDE", "LONGITUDE")]
-```
-
-
-```{r}
-str_name<-'/Users/henryzhu/Research/data/wildfire/gpw-v4-population-count-rev11_2020_30_sec_tif/gpw_v4_population_count_rev11_2020_30_sec.tif' 
+str_name<-'~/Box Sync/wildfire_mitigation/raw_data/gpw-v4-population-count-rev11_2020_30_sec_tif/gpw_v4_population_count_rev11_2020_30_sec.tif' 
 imported_raster <- raster(str_name) %>% setExtent(extent(c(-124.5, -114, 32, 42.1)), keepres=TRUE)
 raster_pts = SpatialPoints(imported_raster)
 gpw_grid <- data.frame(raster_pts@coords)
 colnames(gpw_grid) <- c("LONGITUDE", "LATITUDE")
-st_as_sf((gpw_grid),
+gpw_grid <- st_as_sf((gpw_grid),
                 coords = c("LONGITUDE", "LATITUDE"),
                 crs = 4326,
          remove=FALSE)
